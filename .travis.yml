@@ -29,7 +29,7 @@ install:
 
 script:
   - mkdir -p /tmp/out
-  - ./scripts/ci_build.py
+  - travis_wait 30 ./scripts/ci_build.py
 
 after_failure:
   - tail logs/*

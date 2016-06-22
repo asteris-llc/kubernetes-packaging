@@ -8,7 +8,10 @@ git remote add -t consul-integration -f origin https://github.com/asteris-llc/ku
 git checkout consul-integration
 
 # Build all components
-build/run.sh hack/build-cross.sh
+go get github.com/tools/godep
+./hack/install-etcd.sh
+./hack/build-cross.sh
+export PATH=$GOPATH/bin:./third_party/etcd:$PATH
 
 # Build hypercube docker image
 pushd cluster/images/hypercube

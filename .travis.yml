@@ -25,12 +25,8 @@ cache:
     - tools
 
 install:
-  - go get github.com/tools/godep
-  - ./hack/install-etcd.sh
-  - ./hack/build-go.sh
-  - export PATH=$GOPATH/bin:./third_party/etcd:$PATH
   - source scripts/travis-cache.sh
- 
+
 script:
   - mkdir -p /tmp/out
   - ./scripts/ci_build.py

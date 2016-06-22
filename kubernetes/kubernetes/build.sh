@@ -16,7 +16,7 @@ go get github.com/tools/godep
 ./hack/install-etcd.sh
 KUBE_OUTPUT_BINPATH={{.BuildRoot}}/out ./hack/build-go.sh
 export PATH=$GOPATH/bin:./third_party/etcd:$PATH || echo "Somethings wrong with export"
-
+ 
 # Build hypercube docker image
 pushd ./cluster/images/hypercube
 ARCH=amd64 REGISTRY="ciscocloud" make push VERSION=v{{.Version}} || echo "hypercube push failed"

@@ -1,5 +1,9 @@
 set -ex
 
+## create an installation
+INSTALL={{.BuildRoot}}/out
+mkdir $INSTALL
+
 mkdir kubernetes && cd kubernetes
 
 # Fetch a branch with working consul-integration
@@ -10,14 +14,10 @@ git checkout consul-integration
 # Build all components
 go get github.com/tools/godep
 ./hack/install-etcd.sh
-./hack/build-go.sh
-export PATH=$GOPATH/bin:./third_party/etcd:$PATH
+KUBE_OUTPUT_BINPATH={{.BuildRoot}}/out ./hack/build-go.sh
+export PATH=$GOPATH/bin:./third_party/etcd:$PATH || echo "Somethings wrong with export"
 
 # Build hypercube docker image
-pushd cluster/images/hypercube
-ARCH=amd64 REGISTRY="ciscocloud" make push VERSION=v{{.Version}}
+pushd ./cluster/images/hypercube
+ARCH=amd64 REGISTRY="ciscocloud" make push VERSION=v{{.Version}} || echo "hypercube push failed"
 popd
-
-## create an installation
-INSTALL={{.BuildRoot}}/out
-mkdir $INSTALL

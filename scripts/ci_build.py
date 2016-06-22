@@ -26,6 +26,7 @@ TRAVIS_BRANCH = os.environ['TRAVIS_BRANCH']
 def ping(signal):
     while signal.empty():
         sys.stdout.write("Still building...")
+        sys.stdout.flush()
         time.sleep(60)
     return
 
@@ -40,8 +41,13 @@ def build(names, stream_for=None):
     stopper = Queue()
     pinger = Thread(target=ping, args=(stopper, ))
     pinger.start()
-    check_call(args)
-    stopper.put("STOP")
+    try:
+        check_call(args)
+    except Exception as e:
+        print(e)
+        stopper.put("STOP")
+    else:
+        stopper.put("STOP")
 
 
 def main(args):

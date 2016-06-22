@@ -3,21 +3,31 @@ import sys
 import os
 from os import path
 from subprocess import check_call, check_output, CalledProcessError
+from threading import Thread
 import re
+import time
+from Queue import Queue
 
 DIR = path.abspath(path.dirname(__file__))
 ROOT = path.abspath(path.join(DIR, '..'))
 
 PATH_RE = re.compile(r'\|(.+?)\| (.+)')
 PATHS = dict([
-    PATH_RE.match(line.strip()).groups() for line
-    in open(path.join(DIR, 'paths')).readlines()
-    if PATH_RE.match(line) is not None
+    PATH_RE.match(line.strip()).groups()
+    for line in open(path.join(DIR, 'paths')).readlines(
+    ) if PATH_RE.match(line) is not None
 ])
 
 COMMIT_RANGE = os.environ['TRAVIS_COMMIT_RANGE']
 TRAVIS_COMMIT = os.environ['TRAVIS_COMMIT']
 TRAVIS_BRANCH = os.environ['TRAVIS_BRANCH']
+
+
+def ping(signal):
+    while signal.empty():
+        sys.stdout.write("Still building...")
+        time.sleep(60)
+    return
 
 
 def build(names, stream_for=None):
@@ -27,7 +37,11 @@ def build(names, stream_for=None):
         args.append('--stream-logs-for=%s' % stream_for)
 
     args.extend(names)
+    stopper = Queue()
+    pinger = Thread(target=ping, args=(stopper))
+    pinger.start()
     check_call(args)
+    stopper.put("STOP")
 
 
 def main(args):
@@ -36,12 +50,15 @@ def main(args):
     if COMMIT_RANGE:
         old, new = filter(None, COMMIT_RANGE.split("."))
         try:
-            check_call(['git', 'merge-base', '--is-ancestor', old, new ])
+            check_call(['git', 'merge-base', '--is-ancestor', old, new])
         except CalledProcessError:
             # Branch rebased, "old" hash is previous head of same branch
-            print "Branch rebased, %s hash is previous head of same branch (%s)" % (old, TRAVIS_BRANCH)
-            ancestor = check_output(['git', 'merge-base', TRAVIS_BRANCH, new]).strip()
-            print "Common ancestor for merge: %s, check against it" % (ancestor)
+            print "Branch rebased, %s hash is previous head of same branch (%s)" % (
+                old, TRAVIS_BRANCH)
+            ancestor = check_output(['git', 'merge-base', TRAVIS_BRANCH, new
+                                     ]).strip()
+            print "Common ancestor for merge: %s, check against it" % (
+                ancestor)
             commit_range = "%s..%s" % (ancestor, new)
         else:
             commit_range = COMMIT_RANGE
@@ -50,16 +67,17 @@ def main(args):
         commit_range = "%s^1..%s" % (TRAVIS_COMMIT, TRAVIS_COMMIT)
         print "Single commit, use '%s' as range" % commit_range
 
-    if 'ci: all' in check_output(['git', 'log', '--pretty=full', '--ancestry-path',  commit_range]):
+    if 'ci: all' in check_output(['git', 'log', '--pretty=full',
+                                  '--ancestry-path', commit_range]):
         names = PATHS.keys()
     else:
         names = [
-            name for (name, path)
-            in PATHS.items()
+            name
+            for (name, path) in PATHS.items()
             if 0 != len([
-                line for line
-                in check_output(['git', 'show', '--name-only', '--pretty=format:', commit_range]).split()
-                if line.startswith(path)
+                line for line in check_output(
+                    ['git', 'show', '--name-only', '--pretty=format:',
+                     commit_range]).split() if line.startswith(path)
             ])
         ]
 
@@ -76,12 +94,14 @@ def main(args):
         try:
             build(names, stream_for)
         except CalledProcessError as e:
-            sys.stderr.write('`%s` returned non-zero exit code %d' % (' '.join(e.cmd), e.returncode))
+            sys.stderr.write('`%s` returned non-zero exit code %d' %
+                             (' '.join(e.cmd), e.returncode))
             return 1
     else:
         print 'nothing to build, skipping'
 
     return 0
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

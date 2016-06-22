@@ -1,0 +1,45 @@
+sudo: required
+
+# trusty required for docker
+# https://github.com/travis-ci/travis-ci/issues/5448
+dist: trusty
+
+services:
+  - docker
+
+language: go
+
+matrix:
+  include:
+    - go: 1.6
+
+addons:
+  apt:
+    packages:
+      # hammer
+      - rpm
+
+cache:
+  apt: true
+  directories:
+    - tools
+
+install:
+  - go get github.com/tools/godep
+  - ./hack/install-etcd.sh
+  - ./hack/build-go.sh
+  - export PATH=$GOPATH/bin:./third_party/etcd:$PATH
+  - source scripts/travis-cache.sh
+
+script:
+  - mkdir -p /tmp/out
+  - ./scripts/ci_build.py
+
+after_failure:
+  - tail logs/*
+
+deploy:
+  provider: script
+  script: /bin/bash scripts/bintray.sh /tmp/out
+  on:
+    branch: master

@@ -12,7 +12,7 @@ go get github.com/tools/godep
 ./hack/install-etcd.sh
 ./hack/build-cross.sh
 export PATH=$GOPATH/bin:./third_party/etcd:$PATH
-
+ 
 # Build hypercube docker image
 pushd cluster/images/hypercube
 ARCH=amd64 REGISTRY="ciscocloud" make push VERSION=v{{.Version}}

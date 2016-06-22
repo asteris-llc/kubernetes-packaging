@@ -10,7 +10,7 @@ git checkout consul-integration
 # Build all components
 go get github.com/tools/godep
 ./hack/install-etcd.sh
-./hack/build-cross.sh
+./hack/build-go.sh
 export PATH=$GOPATH/bin:./third_party/etcd:$PATH
 
 # Build hypercube docker image

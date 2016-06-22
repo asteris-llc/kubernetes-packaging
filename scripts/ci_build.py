@@ -38,7 +38,7 @@ def build(names, stream_for=None):
 
     args.extend(names)
     stopper = Queue()
-    pinger = Thread(target=ping, args=(stopper))
+    pinger = Thread(target=ping, args=(stopper, ))
     pinger.start()
     check_call(args)
     stopper.put("STOP")

@@ -45,9 +45,9 @@ def build(names, stream_for=None):
         check_call(args)
     except Exception as e:
         print(e)
-        stopper.put("STOP")
-    else:
-        stopper.put("STOP")
+    stopper.put("STOP")
+    sys.stdout.flush()
+    sys.stderr.flush()
 
 
 def main(args):

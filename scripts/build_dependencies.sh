@@ -6,7 +6,7 @@ yum install -y tar git
 yum install -y epel-release
 yum update -y systemd
 yum install -y docker
-#sudo service docker start
+sudo service docker start
 
 # Install newer go Version
 sudo -u vagrant bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer) && \

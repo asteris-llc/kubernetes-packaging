@@ -4,6 +4,7 @@ set -ex
 INSTALL={{.BuildRoot}}/out
 mkdir $INSTALL
 
+cd {{.BuildRoot}}
 mkdir kubernetes && cd kubernetes
 
 # Fetch a branch with working consul-integration
@@ -12,13 +13,21 @@ git remote add -t consul-integration -f origin https://github.com/asteris-llc/ku
 git checkout consul-integration
 
 # Build all components
+# If we are running inside vagrant...
+if [ -e /home/vagrant/.gvm/scripts/gvm ] ; then
+  source /home/vagrant/.gvm/scripts/gvm
+  gvm use go1.6 || echo "Using go1.6"
+fi
+
 go get github.com/tools/godep
 ./hack/install-etcd.sh
 KUBE_OUTPUT_BINPATH={{.BuildRoot}}/out ./hack/build-go.sh
 export PATH=$GOPATH/bin:./third_party/etcd:$PATH || echo "Somethings wrong with export" && sleep 1
-ls -la {{.BuildRoot}}/out
+
+cp _output/local/bin/linux/amd64/kubelet _output/local/bin/linux/amd64/kubectl $INSTALL
 
 # Build hypercube docker image
-pushd ./cluster/images/hypercube/
+cd {{.BuildRoot}}
+pushd ./cluster/images/hyperkube/
 ARCH=amd64 REGISTRY="ciscocloud" make push VERSION=v{{.Version}} || echo "hypercube push failed" && sleep 1
 popd

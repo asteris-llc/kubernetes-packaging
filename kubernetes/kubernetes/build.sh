@@ -21,7 +21,7 @@ fi
 
 go get github.com/tools/godep
 ./hack/install-etcd.sh
-KUBE_OUTPUT_BINPATH={{.BuildRoot}}/out ./hack/build-go.sh
+./build/run.sh hack/build-go.sh
 export PATH=$GOPATH/bin:./third_party/etcd:$PATH || echo "Somethings wrong with export" && sleep 1
 
 cp _output/local/bin/linux/amd64/kubelet _output/local/bin/linux/amd64/kubectl $INSTALL

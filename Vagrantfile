@@ -15,4 +15,6 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell" do |s|
     s.path = "scripts/build_dependencies.sh"
   end
+
+  config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
 end

@@ -16,7 +16,6 @@ matrix:
 addons:
   apt:
     packages:
-      # hammer
       - rpm
 
 cache:

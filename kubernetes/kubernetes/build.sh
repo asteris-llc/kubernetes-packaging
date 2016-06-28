@@ -5,12 +5,10 @@ INSTALL={{.BuildRoot}}/out
 mkdir $INSTALL
 
 cd {{.BuildRoot}}
-mkdir kubernetes && cd kubernetes
 
 # Fetch a branch with working consul-integration
-git init
-git remote add -t consul-integration -f origin https://github.com/asteris-llc/kubernetes.git
-git checkout consul-integration
+git clone -q -b consul-integration --single-branch https://github.com/asteris-llc/kubernetes.git
+cd kubernetes
 
 # Build all components
 # If we are running inside vagrant...
@@ -30,5 +28,11 @@ cp _output/dockerized/bin/linux/amd64/kubelet _output/dockerized/bin/linux/amd64
 # Build hypercube docker image
 cd {{.BuildRoot}}/kubernetes
 pushd ./cluster/images/hyperkube/
-ARCH=amd64 REGISTRY="ciscocloud" make push VERSION=v{{.Version}} || echo "hypercube push failed" && sleep 1
+
+# hack to workaround sed syntax fixed in https://github.com/kubernetes/kubernetes/commit/cb11324cc32ffc58c022daef3278a0810c675778
+sed -i "s/sed -i \"\"/sed -i/g" Makefile
+
+ARCH=amd64 REGISTRY="ciscocloud" make VERSION=v{{.Version}} || echo "hypercube push failed" && sleep 1
 popd
+
+sudo rm -rf _output

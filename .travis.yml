@@ -43,6 +43,8 @@ deploy:
       branch: master
   - provider: script
     script:
+      - cat scripts/images
+      - <scripts/images | xargs -r -n1 docker images --format "{{.Repository}}:{{.Tag}}"
       - <scripts/images | xargs -r -n1 docker images --format "{{.Repository}}:{{.Tag}}" | xargs -r -n1 docker push
     on:
       branch: master

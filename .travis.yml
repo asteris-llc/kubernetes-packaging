@@ -33,8 +33,16 @@ script:
 after_failure:
   - tail logs/*
 
+before_deploy:
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
 deploy:
-  provider: script
-  script: /bin/bash scripts/bintray.sh /tmp/out
-  on:
-    branch: master
+  - provider: script
+    script: /bin/bash scripts/bintray.sh /tmp/out
+    on:
+      branch: master
+  - provider: script
+    script:
+      - <scripts/images xargs -n1 docker images --format "{{.Repository}}:{{.Tag}}" | xargs -n1 docker push
+    on:
+      branch: master

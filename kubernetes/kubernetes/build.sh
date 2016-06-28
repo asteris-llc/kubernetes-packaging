@@ -24,7 +24,8 @@ go get github.com/tools/godep
 ./build/run.sh hack/build-go.sh
 export PATH=$GOPATH/bin:./third_party/etcd:$PATH || echo "Somethings wrong with export" && sleep 1
 
-cp _output/local/bin/linux/amd64/kubelet _output/local/bin/linux/amd64/kubectl $INSTALL
+ls -l _output/dockerized/bin/*
+cp _output/dockerized/bin/linux/amd64/kubelet _output/dockerized/bin/linux/amd64/kubectl $INSTALL
 
 # Build hypercube docker image
 cd {{.BuildRoot}}

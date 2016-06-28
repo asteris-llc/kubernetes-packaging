@@ -28,7 +28,7 @@ ls -l _output/dockerized/bin/*
 cp _output/dockerized/bin/linux/amd64/kubelet _output/dockerized/bin/linux/amd64/kubectl $INSTALL
 
 # Build hypercube docker image
-cd {{.BuildRoot}}
+cd {{.BuildRoot}}/kubernetes
 pushd ./cluster/images/hyperkube/
 ARCH=amd64 REGISTRY="ciscocloud" make push VERSION=v{{.Version}} || echo "hypercube push failed" && sleep 1
 popd

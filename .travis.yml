@@ -37,12 +37,13 @@ before_deploy:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
 deploy:
-  provider: script
-  skip_cleanup: true
-  script:
-    - /bin/bash scripts/bintray.sh /tmp/out
-    - cat scripts/images
-    - <scripts/images | xargs -r -n1 docker images --format "{{.Repository}}:{{.Tag}}"
-    - <scripts/images | xargs -r -n1 docker images --format "{{.Repository}}:{{.Tag}}" | xargs -r -n1 docker push
-  on:
-    branch: master
+  - provider: script
+    skip_cleanup: true
+    script: /bin/bash scripts/bintray.sh /tmp/out
+    on:
+      branch: master
+  - provider: script
+    skip_cleanup: true
+    script: /bin/bash scripts/docker.sh
+    on:
+      branch: master

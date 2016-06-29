@@ -37,4 +37,3 @@ export GOPATH=/home/vagrant/go/
 go get -u github.com/asteris-llc/hammer
 
 sudo sed -i 's/enforcing/disabled/g' /etc/selinux/config /etc/selinux/config
-sudo reboot

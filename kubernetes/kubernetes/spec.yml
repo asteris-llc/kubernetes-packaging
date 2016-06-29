@@ -1,8 +1,8 @@
 ---
 name: kubernetes
-version: 1.3.0-alpha.1.1925-2dde8e9607d49f
+version: v1.3.0-alpha.1.1975-c182f99d1b3363
 license: ASL 2.0
-iteration: 6
+iteration: 1
 vendor: Google
 architecture: x86_64
 url: http://kubernetes.io/

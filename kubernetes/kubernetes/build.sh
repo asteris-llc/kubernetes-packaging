@@ -7,7 +7,7 @@ mkdir $INSTALL
 cd {{.BuildRoot}}
 
 # Fetch a branch with working consul-integration
-git clone -q -b consul-integration --single-branch https://github.com/asteris-llc/kubernetes.git
+git clone -q -b consul-integration --single-branch https://github.com/MustWin/kubernetes.git
 cd kubernetes
 
 # Build all components
@@ -32,7 +32,7 @@ pushd ./cluster/images/hyperkube/
 # hack to workaround sed syntax fixed in https://github.com/kubernetes/kubernetes/commit/cb11324cc32ffc58c022daef3278a0810c675778
 sed -i "s/sed -i \"\"/sed -i/g" Makefile
 
-ARCH=amd64 REGISTRY="ciscocloud" make VERSION=v{{.Version}} || echo "hypercube push failed" && sleep 1
+ARCH=amd64 REGISTRY="ciscocloud" make VERSION=v{{.Version}} || echo "hypercube build failed" && sleep 1
 popd
 
 sudo rm -rf _output

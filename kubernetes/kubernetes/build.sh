@@ -35,4 +35,10 @@ sed -i "s/sed -i \"\"/sed -i/g" Makefile
 ARCH=amd64 REGISTRY="ciscocloud" make VERSION=v{{.Version}} || echo "hypercube build failed" && sleep 1
 popd
 
+pushd ./cluster/addons/dns/kube2consul/
+# prevent `cannot enable tty mode on non tty input` when running under hammer
+sed -i "s/docker run -it/docker run -i/g" Makefile
+ARCH=amd64 REGISTRY="ciscocloud" TAG=v{{.Version}} make || echo "kube2consul build failed" && sleep 1
+popd
+
 sudo rm -rf _output

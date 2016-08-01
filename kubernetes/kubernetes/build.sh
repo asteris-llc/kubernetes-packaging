@@ -1,6 +1,7 @@
 set -ex
 
 ## create an installation
+REF=a1e79e91b9fb6a75b8e631f91e622781cdb1f63a
 INSTALL={{.BuildRoot}}/out
 mkdir $INSTALL
 
@@ -9,6 +10,7 @@ cd {{.BuildRoot}}
 # Fetch a branch with working consul-integration
 git clone -q -b consul-integration --single-branch https://github.com/MustWin/kubernetes.git
 cd kubernetes
+git reset --hard $REF
 
 # Build all components
 # If we are running inside vagrant...

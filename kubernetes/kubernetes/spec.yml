@@ -1,6 +1,6 @@
 ---
 name: kubernetes
-version: 1.3.3-consul
+version: 1.3.3
 license: ASL 2.0
 iteration: 1
 vendor: Google

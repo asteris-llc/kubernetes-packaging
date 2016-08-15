@@ -1,15 +1,16 @@
 set -ex
 
 ## create an installation
-REF=910d00e24093d4dbdf5afd1ef9b696da4c658bbe
-BRANCH=consul-1.3.3
+REPO=https://github.com/kubernetes/kubernetes.git
+REF=c6411395e09da356c608896d3d9725acab821418
+BRANCH=v1.3.3
 INSTALL={{.BuildRoot}}/out
 mkdir $INSTALL
 
 cd {{.BuildRoot}}
 
 # Fetch a branch with working consul-integration
-git clone -q -b $BRANCH --single-branch https://github.com/MustWin/kubernetes.git
+git clone -q -b $BRANCH --single-branch $REPO
 cd kubernetes
 git reset --hard $REF
 
